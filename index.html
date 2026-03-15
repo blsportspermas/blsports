@@ -3,41 +3,93 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shoes Stock</title>
+    <title>多功能資訊看板</title>
     <style>
-        body { font-family: sans-serif; display: flex; justify-content: center; padding-top: 50px; background: #f0f2f5; }
+        body { 
+            font-family: -apple-system, sans-serif; 
+            background-color: #f8f9fa; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            padding: 20px;
+            margin: 0;
+        }
 
-        /* 外層相框：控制最後呈現給使用者看的大小 */
+        /* 按鈕區域：自動換行 */
+        .button-group {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            max-width: 400px;
+        }
+
+        button {
+            padding: 12px 18px;
+            border: 1px solid #007aff;
+            border-radius: 25px; /* 膠囊形按鈕 */
+            background-color: white;
+            color: #007aff;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        /* 啟動狀態的按鈕樣式 */
+        button.active {
+            background-color: #007aff;
+            color: white;
+        }
+
+        /* 外層裁切容器 */
         .window-frame {
-            width: 350px;         /* 手機寬度建議 350px 左右 */
-            height: 500px;        /* 想要呈現的高度 */
-            overflow: hidden;    /* 關鍵！隱藏框框外的內容 */
-            border: 5px solid #fff;
+            width: 95vw;
+            max-width: 400px;
+            height: 60vh; /* 高度佔螢幕的 60% */
+            overflow: hidden;
             border-radius: 15px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            background: white;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
             position: relative;
         }
 
-        /* 內層 iframe：要把這張紙「位移」到對的位置 */
-        .window-frame iframe {
+        iframe {
             position: absolute;
-            
-            /* --- 調整區開始 --- */
-            top: -80px;          /* 向上推，隱藏 Google Sheets 的標題和工具列 */
-            left: -5px;          /* 向左推，隱藏左側列號或多餘空白 */
-            width: 600px;        /* 寬度要設比外框大，避免內容擠壓 */
-            height: 1200px;      /* 高度也要設夠大 */
-            /* --- 調整區結束 --- */
-
+            top: -5px;
+            left: -5px;
+            width: 600px; /* 寬度設大一點避免縮水 */
+            height: 1000px;
             border: none;
         }
     </style>
 </head>
 <body>
 
-    <div class="window-frame">
-        <iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vTHvF02XnDXMvH-sh32vd7c0MjrUJLBxu_rzdj7ckdoOEQerxEoWTriOCqSzFagvxEseBDVNC1ueFJs/pubhtml?gid=0&range=G1:N16&widget=false&headers=false&chrome=false"></iframe>
+    <div class="button-group">
+        <button onclick="updateSheet('0', 'G1:N16', this)" class="active">分頁一(範圍A)</button>
+        <button onclick="updateSheet('1', 'G1:M19', this)">分頁一(範圍B)</button>
+        <button onclick="updateSheet('2', 'G1:L18', this)">分頁二(全區)</button>
     </div>
+
+    <div class="window-frame">
+        <iframe id="sheetFrame" src="你的發佈網址?gid=0&range=A1:D15&widget=false&headers=false&chrome=false"></iframe>
+    </div>
+
+    <script>
+        function updateSheet(gid, range, btn) {
+            const baseUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTHvF02XnDXMvH-sh32vd7c0MjrUJLBxu_rzdj7ckdoOEQerxEoWTriOCqSzFagvxEseBDVNC1ueFJs/pubhtml";
+            // 組合成帶有 gid 與 range 的新網址
+            const newUrl = `${baseUrl}?gid=${gid}&range=${range}&widget=false&headers=false&chrome=false`;
+            
+            document.getElementById('sheetFrame').src = newUrl;
+
+            // 更新按鈕外觀
+            const buttons = document.querySelectorAll('button');
+            buttons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        }
+    </script>
 
 </body>
 </html>
